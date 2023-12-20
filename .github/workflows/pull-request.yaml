@@ -1,0 +1,31 @@
+name: Verify
+
+on:
+  pull_request:
+
+jobs:
+  verify:
+    name: Success
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build container image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile
+          load: true
+          provenance: false
+          push: false
+          tags: github-bot-signed-commit:${{ github.sha }}
+          target: verify
+
+      - name: Verify container image
+        shell: bash
+        run: |
+          docker run --rm github-bot-signed-commit:${{ github.sha }}
