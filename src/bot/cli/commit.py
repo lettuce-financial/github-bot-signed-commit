@@ -1,11 +1,14 @@
+from logging import INFO
+from logging import basicConfig as basic_config
 from pathlib import Path
 
 from click import Path as PathType
 from click import command, option, secho
+from github import GithubIntegration
 from github.Auth import AppAuth
 
 from ..dtos import Tree
-from ..local import read_commit
+from ..local import read_commit, read_repo
 from ..remote import write_commit
 
 
@@ -45,7 +48,8 @@ def read(
     repo_path: Path,
     ref: str,
 ) -> None:
-    commit = read_commit(repo_path, ref)
+    repo = read_repo(repo_path)
+    commit = read_commit(repo, ref)
 
     secho(f"Commit: {commit.message}", fg="green")
     print_tree(commit.tree, Path())
@@ -57,6 +61,7 @@ def read(
     "--app-id",
     envvar="GITHUB_APP_ID",
     required=True,
+    type=int,
 )
 @option(
     "--private-key",
@@ -86,7 +91,18 @@ def write(
     repo_path: Path,
     ref: str,
 ) -> None:
-    auth = AppAuth(application_id, private_key)
+    basic_config(level=INFO)
 
-    commit = read_commit(repo_path, ref)
-    write_commit(auth, commit)
+    repo = read_repo(repo_path)
+
+    # TODO: parse repo.remote().url to get GitHub information
+    # print(repo.remote().url)
+    auth = AppAuth(application_id, private_key)
+    integration = GithubIntegration(auth=auth)
+    installation = integration.get_installations()[0]
+    github = installation.get_github_for_installation()
+    repository = github.get_repo("lettuce-financial/github-bot-signed-commit")
+
+    commit = read_commit(repo, ref)
+    git_commit = write_commit(repository, commit)
+    secho(f"Created git commit: {git_commit.sha}", fg="green")

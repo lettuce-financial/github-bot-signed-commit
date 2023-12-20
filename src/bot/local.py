@@ -116,9 +116,12 @@ def extract_message(commit: Commit) -> str:
         return commit.message.decode("utf-8")
 
 
-def read_commit(repo_path: Path, ref: str) -> CommitDTO:
+def read_repo(repo_path: Path) -> Repo:
+    return Repo(repo_path)
+
+
+def read_commit(repo: Repo, ref: str) -> CommitDTO:
     # Find the commit at the given ref in the local repo.
-    repo = Repo(repo_path)
     commit = repo.commit(ref)
 
     # Compute the diff between the parent and this commit
