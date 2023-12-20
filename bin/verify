@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+PARENT=$(dirname $(realpath $0))
+
+${PARENT}/verify-style
+${PARENT}/verify-types
+${PARENT}/verify-tests

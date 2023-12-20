@@ -1,0 +1,114 @@
+[project]
+
+name = "bot"
+
+dynamic = ["version", "readme"]
+
+requires-python = ">=3.11"
+
+dependencies = [
+  "click==8.1.7",
+  "GitPython==3.1.40",
+  "PyGithub==2.1.1",
+]
+
+
+[project.optional-dependencies]
+
+dist = [
+  "build==1.0.3",
+]
+
+style = [
+  "autoflake==2.2.1",
+  "black==23.11.0",
+  "flake8==6.1.0",
+  "flake8-isort==6.1.1",
+  "flake8-print==5.0.0",
+  "flake8-pyproject==1.2.3",
+  "isort[colors]==5.13.2",
+]
+
+test = [
+  "pytest==7.4.3",
+  "httpx==0.25.2"
+]
+
+types = [
+  "mypy==1.6.1",
+  "types-requests==2.31.0.10",
+]
+
+
+[project.scripts]
+
+commit = "bot.cli.commit:main"
+
+[build-system]
+
+requires = [
+  "setuptools==67.8.0",
+  "wheel==0.40.0",
+]
+build-backend = "setuptools.build_meta"
+
+
+[tool.setuptools.dynamic]
+
+version = { file = ".version" }
+readme = { file = "README.md", content-type = "text/markdown" }
+
+
+[tool.setuptools.packages.find]
+
+where = ["src"]
+exclude = ["*tests*"]
+
+
+[tool.setuptools.package-data]
+
+"*" = ["py.typed"]
+
+
+[tool.black]
+
+line-length = 88
+
+
+[tool.flake8]
+
+exclude = ".venv"
+max-line-length = 88
+
+[tool.isort]
+
+profile = "black"
+
+
+[tool.mypy]
+
+check_untyped_defs = true
+disallow_any_unimported = true
+disallow_any_expr = false
+disallow_any_decorated = true
+disallow_any_explicit = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+
+pretty = true
+
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_return_any = true
+warn_unreachable = true
+
+exclude = "generated"
+
+[tool.pytest.ini_options]
+
+addopts = "--import-mode=importlib"
