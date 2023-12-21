@@ -80,6 +80,7 @@ def iter_blobs(item: Diff) -> Generator[BlobDTO, None, None]:
 
 
 def build_trees(blobs: list[BlobDTO]) -> TreeDTO:
+    """Build the tree structure from a list of blobs."""
     trees: dict[Path, TreeDTO] = {}
 
     # Create the root tree
