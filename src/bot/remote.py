@@ -13,6 +13,7 @@ from .enums import Mode, Type
 
 
 def authenticate_app(app_id: int, private_key: str) -> Github:
+    """Create a Github instance with for a GitHub app (bot)."""
     auth = AppAuth(app_id, private_key)
     integration = GithubIntegration(auth=auth)
     installation = integration.get_installations()[0]
@@ -20,7 +21,9 @@ def authenticate_app(app_id: int, private_key: str) -> Github:
 
 
 def make_tree_blob_element(blob: Blob) -> InputGitTreeElement:
+    """Create a tree element for a blob."""
     if blob.sha:
+        # Add
         with blob.path.open() as infile:
             return InputGitTreeElement(
                 path=str(blob.path),
@@ -29,6 +32,7 @@ def make_tree_blob_element(blob: Blob) -> InputGitTreeElement:
                 content=infile.read(),
             )
     else:
+        # Remove
         return InputGitTreeElement(
             path=str(blob.path),
             mode=Mode.FILE.value,
@@ -38,6 +42,7 @@ def make_tree_blob_element(blob: Blob) -> InputGitTreeElement:
 
 
 def iter_tree_blob_element(tree: Tree) -> Generator[InputGitTreeElement, None, None]:
+    """Collapse the tree structure into blob elements."""
     for child in tree.trees:
         yield from iter_tree_blob_element(child)
 
@@ -46,6 +51,7 @@ def iter_tree_blob_element(tree: Tree) -> Generator[InputGitTreeElement, None, N
 
 
 def write_tree(repo: Repository, tree: Tree, base_tree: GitTree) -> GitTree:
+    """Write a git tree."""
     logger = get_logger("GitTree")
 
     tree_blob_elements = list(iter_tree_blob_element(tree))
@@ -60,6 +66,7 @@ def write_tree(repo: Repository, tree: Tree, base_tree: GitTree) -> GitTree:
 
 
 def write_commit(repo: Repository, commit: Commit) -> GitCommit:
+    """Write a git commit."""
     logger = get_logger("GitCommit")
 
     parent_git_commit = repo.get_git_commit(commit.parents[0])
