@@ -13,12 +13,17 @@ ROOT = Path()
 
 
 def extract_repo_name(repo: Repo, remote: str = "origin") -> str:
+    """Extract the GitHub organization and repository name.
+
+    Assumes that the local repo has an appropriately configured remote named `origin`.
+    """
     origin = repo.remote("origin")
     parsed_url = urlparse(origin.url)
     return parsed_url.path.rsplit(":", 1)[-1].removesuffix(".git")
 
 
 def iter_blobs(item: Diff) -> Generator[BlobDTO, None, None]:
+    """Iterate through diff items and produce blobs."""
     match (item.change_type):
         case "A":
             # File added
@@ -80,7 +85,17 @@ def iter_blobs(item: Diff) -> Generator[BlobDTO, None, None]:
 
 
 def build_trees(blobs: list[BlobDTO]) -> TreeDTO:
-    """Build the tree structure from a list of blobs."""
+    """Build the tree structure from a list of blobs.
+
+    Technically, this function is not needed because the GitHub API supports
+    creating a nested tree in a single operation (and we use this feature).
+
+    However, this API detail was not obvious from documentation so the original
+    implementation created trees recursively and the DTOs still reflect this
+    possibility. Since these DTOs are more-or-less faithful to git's own object
+    model, removing the `Tree` structure would make the DTOs a bit less clear,
+    even if it removed a step.
+    """
     trees: dict[Path, TreeDTO] = {}
 
     # Create the root tree
@@ -108,6 +123,7 @@ def build_trees(blobs: list[BlobDTO]) -> TreeDTO:
 
 
 def find_parent(commit: Commit) -> Commit:
+    """Find the parent of a commit."""
     if not commit.parents:
         raise ValueError("Cannot create a repo's initial commit.")
 
@@ -118,6 +134,7 @@ def find_parent(commit: Commit) -> Commit:
 
 
 def extract_message(commit: Commit) -> str:
+    """Extract the commit message of a commit."""
     if isinstance(commit.message, str):
         return commit.message
     else:
@@ -125,10 +142,12 @@ def extract_message(commit: Commit) -> str:
 
 
 def read_repo(repo_path: Path) -> Repo:
+    """Read a repo from a path."""
     return Repo(repo_path)
 
 
 def read_commit(repo: Repo, ref: str) -> CommitDTO:
+    """Read a local commit into a DTO representaiton."""
     # Find the commit at the given ref in the local repo.
     commit = repo.commit(ref)
 

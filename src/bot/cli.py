@@ -48,6 +48,7 @@ def read(
     repo_path: Path,
     sha: str,
 ) -> None:
+    """Read a commit from a local git repo and print it."""
     repo = read_repo(repo_path)
     commit = read_commit(repo, sha)
 
@@ -100,6 +101,7 @@ def write(
     repo_path: Path,
     ref: str,
 ) -> None:
+    """Read a commit from a local git repo and write it to GitHub."""
     basic_config(level=INFO)
 
     repo = read_repo(repo_path)
