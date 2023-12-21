@@ -5,9 +5,9 @@ from pathlib import Path
 from click import Path as PathType
 from click import command, option, secho
 
-from ..dtos import Tree
-from ..local import extract_repo_name, read_commit, read_repo
-from ..remote import authenticate_app, write_commit
+from .dtos import Tree
+from .local import extract_repo_name, read_commit, read_repo
+from .remote import authenticate_app, write_commit
 
 
 def print_tree(tree: Tree, parent: Path, depth: int = 0) -> None:
@@ -29,6 +29,7 @@ def print_tree(tree: Tree, parent: Path, depth: int = 0) -> None:
 @option(
     "--repo-path",
     "--repo",
+    help="The path to the local git repository.",
     type=PathType(
         exists=True,
         file_okay=False,
@@ -39,15 +40,16 @@ def print_tree(tree: Tree, parent: Path, depth: int = 0) -> None:
 )
 @option(
     "--ref",
+    help="The local ref to read.",
     required=True,
 )
 def read(
     *,
     repo_path: Path,
-    ref: str,
+    sha: str,
 ) -> None:
     repo = read_repo(repo_path)
-    commit = read_commit(repo, ref)
+    commit = read_commit(repo, sha)
 
     secho(f"Commit: {commit.message}", fg="green")
     print_tree(commit.tree, Path())
@@ -55,21 +57,9 @@ def read(
 
 @command()
 @option(
-    "--application-id",
-    "--app-id",
-    envvar="GITHUB_APP_ID",
-    required=True,
-    type=int,
-)
-@option(
-    "--private-key",
-    hidden=True,
-    envvar="GITHUB_APP_PRIVATE_KEY",
-    required=True,
-)
-@option(
     "--repo-path",
     "--repo",
+    help="The path to the local git repository.",
     type=PathType(
         exists=True,
         file_okay=False,
@@ -79,12 +69,33 @@ def read(
     required=True,
 )
 @option(
+    "--branch",
+    help="The remote branch on which to add the generated commit.",
+    required=True,
+)
+@option(
     "--ref",
+    help="The local ref to recreate remotely.",
+    required=True,
+)
+@option(
+    "--app-id",
+    envvar="GITHUB_APP_ID",
+    help="The GitHub App's app id.",
+    required=True,
+    type=int,
+)
+@option(
+    "--private-key",
+    hidden=True,
+    help="The GitHub App's private key",
+    envvar="GITHUB_APP_PRIVATE_KEY",
     required=True,
 )
 def write(
     *,
-    application_id: int,
+    app_id: int,
+    branch: str,
     private_key: str,
     repo_path: Path,
     ref: str,
@@ -94,10 +105,10 @@ def write(
     repo = read_repo(repo_path)
     repo_name = extract_repo_name(repo)
 
-    github = authenticate_app(application_id, private_key)
+    github = authenticate_app(app_id, private_key)
     repository = github.get_repo(repo_name)
+    git_ref = repository.get_git_ref(f"heads/{branch}")
 
     commit = read_commit(repo, ref)
     git_commit = write_commit(repository, commit)
-
-    secho(f"Created git commit: {git_commit.sha}", fg="green")
+    git_ref.edit(git_commit.sha)

@@ -1,8 +1,10 @@
 from logging import getLogger as get_logger
+from typing import Generator
 
 from github import Github, GithubIntegration
 from github.Auth import AppAuth
 from github.GitCommit import GitCommit
+from github.GitRef import GitRef
 from github.GitTree import GitTree
 from github.InputGitTreeElement import InputGitTreeElement
 from github.Repository import Repository
@@ -11,8 +13,8 @@ from .dtos import Blob, Commit, Tree
 from .enums import Mode, Type
 
 
-def authenticate_app(application_id: int, private_key: str) -> Github:
-    auth = AppAuth(application_id, private_key)
+def authenticate_app(app_id: int, private_key: str) -> Github:
+    auth = AppAuth(app_id, private_key)
     integration = GithubIntegration(auth=auth)
     installation = integration.get_installations()[0]
     return installation.get_github_for_installation()  # type: ignore
@@ -36,28 +38,22 @@ def make_tree_blob_element(blob: Blob) -> InputGitTreeElement:
         )
 
 
-def make_tree_tree_element(tree: Tree, git_tree: GitTree) -> InputGitTreeElement:
-    return InputGitTreeElement(
-        path=str(tree.path),
-        mode=Mode.SUBDIRECTORY.value,
-        type=Type.TREE.value,
-        sha=git_tree.sha,
-    )
+def iter_tree_blob_element(tree: Tree) -> Generator[InputGitTreeElement, None, None]:
+    for child in tree.trees:
+        yield from iter_tree_blob_element(child)
+
+    for blob in tree.blobs:
+        yield make_tree_blob_element(blob)
 
 
 def write_tree(repo: Repository, tree: Tree, base_tree: GitTree) -> GitTree:
     logger = get_logger("GitTree")
 
-    child_git_trees = [write_tree(repo, child, base_tree) for child in tree.trees]
+    tree_blob_elements = list(iter_tree_blob_element(tree))
 
-    tree_items = [make_tree_blob_element(blob) for blob in tree.blobs] + [
-        make_tree_tree_element(child, child_git_tree)
-        for child, child_git_tree in zip(tree.trees, child_git_trees)
-    ]
-
-    logger.info(f"Creating git tree with {len(tree_items)} items from: {base_tree}")
+    logger.info("Creating git tree")
     git_tree = repo.create_git_tree(
-        tree=tree_items,
+        tree=tree_blob_elements,
         base_tree=base_tree,
     )
     logger.info(f"Created git tree: {git_tree.sha}")
