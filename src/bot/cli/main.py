@@ -4,12 +4,10 @@ from pathlib import Path
 
 from click import Path as PathType
 from click import command, option, secho
-from github import GithubIntegration
-from github.Auth import AppAuth
 
 from ..dtos import Tree
-from ..local import read_commit, read_repo
-from ..remote import write_commit
+from ..local import extract_repo_name, read_commit, read_repo
+from ..remote import authenticate_app, write_commit
 
 
 def print_tree(tree: Tree, parent: Path, depth: int = 0) -> None:
@@ -86,7 +84,7 @@ def read(
 )
 def write(
     *,
-    application_id: str,
+    application_id: int,
     private_key: str,
     repo_path: Path,
     ref: str,
@@ -94,15 +92,12 @@ def write(
     basic_config(level=INFO)
 
     repo = read_repo(repo_path)
+    repo_name = extract_repo_name(repo)
 
-    # TODO: parse repo.remote().url to get GitHub information
-    # print(repo.remote().url)
-    auth = AppAuth(application_id, private_key)
-    integration = GithubIntegration(auth=auth)
-    installation = integration.get_installations()[0]
-    github = installation.get_github_for_installation()
-    repository = github.get_repo("lettuce-financial/github-bot-signed-commit")
+    github = authenticate_app(application_id, private_key)
+    repository = github.get_repo(repo_name)
 
     commit = read_commit(repo, ref)
     git_commit = write_commit(repository, commit)
+
     secho(f"Created git commit: {git_commit.sha}", fg="green")

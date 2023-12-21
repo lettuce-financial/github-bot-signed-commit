@@ -1,5 +1,7 @@
 from logging import getLogger as get_logger
 
+from github import Github, GithubIntegration
+from github.Auth import AppAuth
 from github.GitCommit import GitCommit
 from github.GitTree import GitTree
 from github.InputGitTreeElement import InputGitTreeElement
@@ -7,6 +9,13 @@ from github.Repository import Repository
 
 from .dtos import Blob, Commit, Tree
 from .enums import Mode, Type
+
+
+def authenticate_app(application_id: int, private_key: str) -> Github:
+    auth = AppAuth(application_id, private_key)
+    integration = GithubIntegration(auth=auth)
+    installation = integration.get_installations()[0]
+    return installation.get_github_for_installation()  # type: ignore
 
 
 def make_tree_blob_element(blob: Blob) -> InputGitTreeElement:

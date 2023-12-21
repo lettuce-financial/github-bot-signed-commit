@@ -42,8 +42,8 @@ types = [
 
 [project.scripts]
 
-read-commit = "bot.cli.commit:read"
-write-commit = "bot.cli.commit:write"
+read-commit = "bot.cli.main:read"
+write-commit = "bot.cli.main:write"
 
 [build-system]
 

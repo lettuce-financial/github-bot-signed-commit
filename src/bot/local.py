@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Generator
+from urllib.parse import urlparse
 
 from git import Diff, Repo
 from git.objects import Commit
@@ -9,6 +10,12 @@ from .dtos import Commit as CommitDTO
 from .dtos import Tree as TreeDTO
 
 ROOT = Path()
+
+
+def extract_repo_name(repo: Repo, remote: str = "origin") -> str:
+    origin = repo.remote("origin")
+    parsed_url = urlparse(origin.url)
+    return parsed_url.path.rsplit(":", 1)[-1].removesuffix(".git")
 
 
 def iter_blobs(item: Diff) -> Generator[BlobDTO, None, None]:
