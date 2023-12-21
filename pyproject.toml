@@ -4,7 +4,7 @@ name = "bot"
 
 dynamic = ["version", "readme"]
 
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 
 dependencies = [
   "click==8.1.7",
