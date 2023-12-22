@@ -28,7 +28,6 @@ def print_tree(tree: Tree, parent: Path, depth: int = 0) -> None:
 @command()
 @option(
     "--repo-path",
-    "--repo",
     help="The path to the local git repository.",
     type=PathType(
         exists=True,
@@ -59,7 +58,6 @@ def read(
 @command()
 @option(
     "--repo-path",
-    "--repo",
     help="The path to the local git repository.",
     type=PathType(
         exists=True,
@@ -68,6 +66,10 @@ def read(
         path_type=Path,
     ),
     required=True,
+)
+@option(
+    "--repo-name",
+    help="The (fully qualified) name of the GitHub repo.",
 )
 @option(
     "--branch",
@@ -98,6 +100,7 @@ def write(
     app_id: int,
     branch: str,
     private_key: str,
+    repo_name: str | None,
     repo_path: Path,
     ref: str,
 ) -> None:
@@ -105,7 +108,7 @@ def write(
     basic_config(level=INFO)
 
     repo = read_repo(repo_path)
-    repo_name = extract_repo_name(repo)
+    repo_name = repo_name or extract_repo_name(repo)
 
     github = authenticate_app(app_id, private_key)
     repository = github.get_repo(repo_name)
