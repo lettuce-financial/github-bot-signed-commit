@@ -1,4 +1,5 @@
 """Data transfer objects between git implementations."""
+
 from dataclasses import dataclass, field
 from pathlib import Path
 

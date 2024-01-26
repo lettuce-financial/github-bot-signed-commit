@@ -21,7 +21,7 @@ dist = [
 
 style = [
   "autoflake==2.2.1",
-  "black==23.12.1",
+  "black==24.1.0",
   "flake8==7.0.0",
   "flake8-isort==6.1.1",
   "flake8-print==5.0.0",
