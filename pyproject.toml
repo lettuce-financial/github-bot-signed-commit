@@ -20,7 +20,7 @@ dist = [
 ]
 
 style = [
-  "autoflake==2.2.1",
+  "autoflake==2.3.0",
   "black==24.2.0",
   "flake8==7.0.0",
   "flake8-isort==6.1.1",
