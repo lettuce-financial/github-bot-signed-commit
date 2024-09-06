@@ -1,5 +1,5 @@
 ### Use an appropriate version of Python
-FROM python:3.12-slim-bullseye@sha256:37e57787f56b6d0967414071ad7dca3d5165107a03cdaca526c7d55434f69f70 AS python
+FROM python:3.12-slim-bullseye@sha256:cf26ec2ab19cd38e57658f28f616050f854bf9d19d7530574aed86918e4d2ccd AS python
 
 ENV DEBIAN_FRONTEND=noninteractive
 
