@@ -9,7 +9,7 @@ requires-python = ">=3.10"
 dependencies = [
   "click==8.1.8",
   "GitPython==3.1.44",
-  "PyGithub==2.5.0",
+  "PyGithub==2.6.0",
 ]
 
 
