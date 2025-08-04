@@ -17,7 +17,7 @@ def authenticate_app(app_id: int, private_key: str) -> Github:
     auth = AppAuth(app_id, private_key)
     integration = GithubIntegration(auth=auth)
     installation = integration.get_installations()[0]
-    return installation.get_github_for_installation()  # type: ignore
+    return installation.get_github_for_installation()
 
 
 def make_tree_blob_element(blob: Blob) -> InputGitTreeElement:
