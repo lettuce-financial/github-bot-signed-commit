@@ -3,21 +3,9 @@ set -e
 set -o pipefail
 
 PROJECT_ROOT=$(dirname $(dirname $(realpath $0)))
-PROJECT_NAME=$(basename ${PROJECT_ROOT})
 
 pushd ${PROJECT_ROOT} > /dev/null
 
-# Installation defaults to using a local virtualenv (`.env`) but may use other tooling
-# (e.g. `virtualenvwrapper`) to externalize the installation location.
-
-if [ -z "${VIRTUAL_ENV}" ]; then
-    # Create a local virtualenv if one does not exist
-    test -d .venv || python3 -m venv .venv --prompt ${PROJECT_NAME}
-    source .venv/bin/activate
-fi
-
-# We need wheel to install any binary packagess
-pip3 install --disable-pip-version-check wheel
-
 # Install dependencies in editable mode
-pip3 install --disable-pip-version-check --editable '.[dist,style,test,types]'
+uv venv --allow-existing
+uv pip install --editable '.[dist,style,test,types]'

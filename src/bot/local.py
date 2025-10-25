@@ -24,7 +24,7 @@ def extract_repo_name(repo: Repo, remote: str = "origin") -> str:
 
 def iter_blobs(item: Diff) -> Generator[BlobDTO, None, None]:
     """Iterate through diff items and produce blobs."""
-    match (item.change_type):
+    match item.change_type:
         case "A":
             # File added
             assert item.b_path is not None

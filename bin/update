@@ -1,0 +1,17 @@
+#!/bin/bash -eo pipefail
+
+PROJECT_ROOT=$(dirname $(dirname $(realpath $0)))
+
+pushd ${PROJECT_ROOT} > /dev/null
+
+if which uv >/dev/null 2>&1; then
+    uv pip compile pyproject.toml --no-annotate --no-header -o requirements.txt
+else
+    WORKDIR=$(mktemp -d)
+
+    trap "rm -rf ${WORKDIR}" EXIT
+
+    python3 -m venv ${WORKDIR}
+    ${WORKDIR}/bin/pip install --disable-pip-version-check --quiet --editable .
+    ${WORKDIR}/bin/pip freeze --disable-pip-version-check --quiet --exclude-editable > requirements.txt
+fi

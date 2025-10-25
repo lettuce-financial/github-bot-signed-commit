@@ -6,6 +6,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update -y && \
     apt-get -qq install -y git >/dev/null
 
+RUN pip install uv
+
 ### Install requirements
 FROM python AS requirements
 
