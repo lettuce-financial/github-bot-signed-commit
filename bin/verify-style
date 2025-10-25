@@ -3,44 +3,12 @@ set -e
 set -o pipefail
 
 PROJECT_ROOT=$(dirname $(dirname $(realpath $0)))
-
 pushd ${PROJECT_ROOT} > /dev/null
 
-if [ -z "${VIRTUAL_ENV}" ] && [ -r .venv ]; then
-    source .venv/bin/activate
-fi
-
-# Remove unused imports and variables.
-#
-# We run `autoflake` *first* so unused values are not used in further formatting.
 if [ -n "$CI" ]; then
-    autoflake --check-diff --recursive --remove-unused-variables src
+    uv run ruff check
+    uv run ruff format --check --diff
 else
-    autoflake --recursive --remove-unused-variables --quiet --in-place src
+    uv run ruff check --fix
+    uv run ruff format
 fi
-
-
-# Enforce import ordering.
-#
-# We run `isort` *before* `flake8` so that it doesn't complain about import ordering.
-if [ -n "$CI" ]; then
-    isort --check --diff --color src
-else
-    isort --quiet --color src
-fi
-
-
-# Enforce opinionated formatting.
-#
-# We run `black` *after* all other tools that edit code format.
-if [ -n "$CI" ]; then
-    black --check --diff --color src
-else
-    black --quiet --color src
-fi
-
-
-# Validate style.
-#
-# We run `flake8` *last* to validate style left over after automatic formatting.
-flake8 src
