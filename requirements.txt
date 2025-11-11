@@ -9,7 +9,7 @@ idna==3.11
 pycparser==2.23
 pygithub==2.8.1
 pyjwt==2.10.1
-pynacl==1.6.0
+pynacl==1.6.1
 requests==2.32.5
 smmap==5.0.2
 typing-extensions==4.15.0
