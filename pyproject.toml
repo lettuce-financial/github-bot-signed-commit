@@ -7,7 +7,7 @@ dynamic = ["version", "readme"]
 requires-python = ">=3.10"
 
 dependencies = [
-  "click==8.3.0",
+  "click==8.3.1",
   "GitPython==3.1.45",
   "PyGithub==2.8.1",
 ]
