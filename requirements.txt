@@ -6,7 +6,7 @@ cryptography==46.0.3
 gitdb==4.0.12
 gitpython==3.1.46
 idna==3.11
-pycparser==2.23
+pycparser==3.0
 pygithub==2.8.1
 pyjwt==2.10.1
 pynacl==1.6.2
