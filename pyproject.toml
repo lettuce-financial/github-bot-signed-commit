@@ -42,7 +42,7 @@ write-commit = "bot.cli:write"
 [build-system]
 
 requires = [
-  "setuptools==80.10.1",
+  "setuptools==80.10.2",
   "wheel==0.46.3",
 ]
 build-backend = "setuptools.build_meta"
