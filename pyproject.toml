@@ -4,13 +4,12 @@ name = "bot"
 
 dynamic = ["version", "readme"]
 
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 
 dependencies = [
   "click==8.3.1",
   "GitPython==3.1.46",
   "PyGithub==2.8.1",
-  "pyjwt==2.11.0",
 ]
 
 

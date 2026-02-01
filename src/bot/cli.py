@@ -28,6 +28,7 @@ def print_tree(tree: Tree, parent: Path, depth: int = 0) -> None:
 @command()
 @option(
     "--repo-path",
+    "--path",
     help="The path to the local git repository.",
     type=PathType(
         exists=True,
@@ -58,6 +59,7 @@ def read(
 @command()
 @option(
     "--repo-path",
+    "--path",
     help="The path to the local git repository.",
     type=PathType(
         exists=True,
@@ -69,6 +71,8 @@ def read(
 )
 @option(
     "--repo-name",
+    "--repo",
+    "--name",
     help="The (fully qualified) name of the GitHub repo.",
 )
 @option(
