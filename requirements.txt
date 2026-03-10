@@ -11,6 +11,6 @@ pygithub==2.8.1
 pyjwt==2.11.0
 pynacl==1.6.2
 requests==2.32.5
-smmap==5.0.2
+smmap==5.0.3
 typing-extensions==4.15.0
 urllib3==2.2.1
