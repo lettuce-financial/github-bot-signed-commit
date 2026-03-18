@@ -12,17 +12,10 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - name: Create app token
-        id: create-app-token
-        uses: ./.github/actions/github/app-token
+      - name: Auto Merge Lettuce Bot PRs
+        id: auto-merge
+        uses: ./.github/actions/github/auto-merge
         with:
           app_id: ${{ vars.LETTUCE_BOT_APP_ID }}
           installation_id: ${{ vars.LETTUCE_BOT_INSTALLATION_ID }}
           private_key: ${{ secrets.LETTUCE_BOT_PRIVATE_KEY }}
-
-      - name: Auto Merge Lettuce Bot
-        if: ${{ github.actor == 'lettuce-bot[bot]' || github.actor == 'renovate[bot]' }}
-        run: |
-          gh pr merge --repo ${{ github.repository }} --auto --merge ${{ github.event.number }}
-        env:
-          GH_TOKEN: ${{ steps.create-app-token.outputs.token }}

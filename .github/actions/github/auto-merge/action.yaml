@@ -1,0 +1,52 @@
+name: "Auto Merge Bot PRs"
+description: "Automatically merge Bot pull requests in a GitHub repository"
+
+inputs:
+  app_id:
+    description: "The app id"
+    type: string
+    required: true
+  installation_id:
+    description: "The app installation id"
+    type: string
+    required: true
+  private_key:
+    description: "The app private key in PEM format"
+    type: string
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check if PR is from a bot
+      id: check-bot
+      if: ${{ github.actor != 'lettuce-bot[bot]' && github.actor != 'renovate[bot]' }}
+      shell: bash
+      run: |
+        echo "PR is not from a bot, skipping auto-merge."
+        exit 0
+
+    - name: Create app token
+      id: create-app-token
+      if: ${{ steps.check-bot.outcome == 'skipped' }}
+      uses: ./.github/actions/github/app-token
+      with:
+        app_id: ${{ inputs.app_id }}
+        installation_id: ${{ inputs.installation_id }}
+        private_key: ${{ inputs.private_key }}
+
+    - name: Auto Merge Lettuce Bot
+      if: ${{ steps.check-bot.outcome == 'skipped' }}
+      shell: bash
+      run: |
+        for i in {1..5}; do
+          if gh pr merge --repo ${{ github.repository }} --auto --merge ${{ github.event.number }}; then
+            echo "Successfully merged PR on attempt $i"
+            break
+          else
+            echo "Attempt $i failed, retrying in 30 seconds..."
+            sleep 30
+          fi
+        done
+      env:
+        GH_TOKEN: ${{ steps.create-app-token.outputs.token }}
