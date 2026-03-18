@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Auto Merge Lettuce Bot PRs
         id: auto-merge
-        uses: lettuce-financial/actions/.github/actions/github/auto-merge@76ac1e062100511893dff34c5a997f0d6a31db30 # 0.47.1
+        uses: ./.github/actions/github/auto-merge
         with:
           app_id: ${{ vars.LETTUCE_BOT_APP_ID }}
           installation_id: ${{ vars.LETTUCE_BOT_INSTALLATION_ID }}
