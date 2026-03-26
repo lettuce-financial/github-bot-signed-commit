@@ -10,7 +10,7 @@ pycparser==3.0
 pygithub==2.9.0
 pyjwt==2.12.1
 pynacl==1.6.2
-requests==2.32.5
+requests==2.33.0
 smmap==5.0.3
 typing-extensions==4.15.0
 urllib3==2.2.1
