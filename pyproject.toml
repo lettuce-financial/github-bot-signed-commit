@@ -16,7 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 
 dist = [
-  "build==1.4.1",
+  "build==1.4.2",
 ]
 
 style = [
