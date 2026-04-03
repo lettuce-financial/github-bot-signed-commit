@@ -20,7 +20,8 @@ runs:
   steps:
     - name: Check if PR is from a bot
       id: check-bot
-      if: ${{ github.actor != 'lettuce-bot[bot]' && github.actor != 'renovate[bot]' }}
+      # fromJSON parses the string into an actual array, so contains does exact element matching -> no substring false positives.
+      if: ${{ !contains(fromJSON('["lettuce-bot[bot]", "renovate[bot]", "dependabot[bot]"]'), github.actor) }}
       shell: bash
       run: |
         echo "PR is not from a bot, skipping auto-merge."
