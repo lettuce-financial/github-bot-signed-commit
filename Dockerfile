@@ -1,5 +1,5 @@
 ### Use an appropriate version of Python
-FROM python:3.14.4-bookworm@sha256:3b8956be8115f1e725b90a3bf1cb65285c6a2c09768807d9d123e890a25b5894 AS python
+FROM python:3.14.4-bookworm@sha256:7c4f35a5d8200d42b6e57a90a74512a3be740841e7c141e7e01641840ab35176 AS python
 ARG UV_VERSION=0.8.13
 ARG UV_LIBC=musl
 
