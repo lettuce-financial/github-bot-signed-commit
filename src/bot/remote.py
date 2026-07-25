@@ -1,5 +1,5 @@
+from collections.abc import Generator
 from logging import getLogger as get_logger
-from typing import Generator
 
 from github import Github, GithubIntegration
 from github.Auth import AppAuth
