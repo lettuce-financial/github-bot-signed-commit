@@ -20,7 +20,7 @@ dist = [
 ]
 
 style = [
-  "ruff==0.16.5",
+  "ruff==0.16.6",
 ]
 
 test = [
