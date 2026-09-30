@@ -20,11 +20,14 @@ RUN UV_ARCHITECTURE=$(uname -m) && \
 ### Install requirements
 FROM python AS requirements
 
-COPY requirements.txt /opt/project/
 WORKDIR /opt/project
-RUN uv venv
+COPY pyproject.toml uv.lock /opt/project/
+
+# Install the locked dependencies but not the project, whose source is not copied yet,
+# so this layer is reused until pyproject.toml or uv.lock change. `--locked` fails the
+# build when uv.lock no longer matches pyproject.toml, rather than quietly re-locking.
 RUN --mount=type=cache,target=/root/.cache \
-    uv pip install --quiet --link-mode=copy --requirement requirements.txt
+    uv sync --quiet --link-mode=copy --locked --no-install-project
 
 ### Install source and its dependencies
 FROM requirements AS source
@@ -37,13 +40,12 @@ FROM source AS verify
 
 ENV CI=1
 
-# Verify what requirements.txt pins. The image has no uv.lock, so without this the
-# first `uv run` in bin/verify* re-resolves pyproject.toml to the newest releases
-# and replaces the pinned environment before a single check runs.
+# The environment below is synced from uv.lock with `--locked`, so it is the one to
+# verify. This keeps the `uv run` in bin/verify* from syncing or re-locking on its own.
 ENV UV_NO_SYNC=1
 
 RUN --mount=type=cache,target=/root/.cache \
-    uv pip install --quiet --link-mode=copy --editable .[style,types,test]
+    uv sync --quiet --link-mode=copy --locked --extra style --extra types --extra test
 COPY bin/verify* /opt/project/bin/
 
 CMD ["/opt/project/bin/verify"]

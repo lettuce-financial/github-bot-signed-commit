@@ -6,6 +6,5 @@ PROJECT_ROOT=$(dirname $(dirname $(realpath $0)))
 
 pushd ${PROJECT_ROOT} > /dev/null
 
-# Install dependencies in editable mode
-uv venv --allow-existing
-uv pip install --editable '.[dist,style,test,types]'
+# Install the locked dependencies, every extra, and the project in editable mode
+uv sync --all-extras
