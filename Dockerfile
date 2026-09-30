@@ -37,6 +37,11 @@ FROM source AS verify
 
 ENV CI=1
 
+# Verify what requirements.txt pins. The image has no uv.lock, so without this the
+# first `uv run` in bin/verify* re-resolves pyproject.toml to the newest releases
+# and replaces the pinned environment before a single check runs.
+ENV UV_NO_SYNC=1
+
 RUN --mount=type=cache,target=/root/.cache \
     uv pip install --quiet --link-mode=copy --editable .[style,types,test]
 COPY bin/verify* /opt/project/bin/
