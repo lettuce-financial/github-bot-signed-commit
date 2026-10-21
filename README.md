@@ -29,9 +29,13 @@ write-commit \
   --app-id <github-app-id> \
   --private-key <github-app-private-key> \
   --repo /path/to/repo \
-  --ref <some-local-ref>
+  --ref <some-local-ref> \
   --branch <some-remote-branch>
 ```
+
+The branch must already exist, and by default it only moves forward: the commit's parent
+must be the branch's head. Pass `--force` to move the branch to a commit with any parent,
+such as one rebuilt on a newer base, which replaces the branch's commits.
 
 Note that the `GITHUB_APP_PRIVATE_KEY` environment variable can be used to pass the private
 key without passing it as a commmand line argument.
