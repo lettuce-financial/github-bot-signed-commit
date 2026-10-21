@@ -86,6 +86,11 @@ def read(
     required=True,
 )
 @option(
+    "--force/--no-force",
+    default=False,
+    help="Move the branch even when the commit does not descend from its head.",
+)
+@option(
     "--app-id",
     envvar="GITHUB_APP_ID",
     help="The GitHub App's app id.",
@@ -103,6 +108,7 @@ def write(
     *,
     app_id: int,
     branch: str,
+    force: bool,
     private_key: str,
     repo_name: str | None,
     repo_path: Path,
@@ -120,4 +126,4 @@ def write(
 
     commit = read_commit(repo, ref)
     git_commit = write_commit(repository, commit)
-    git_ref.edit(git_commit.sha)
+    git_ref.edit(git_commit.sha, force=force)
