@@ -10,4 +10,10 @@ if [ -z "${VIRTUAL_ENV}" ] && [ -r .venv ]; then
     source .venv/bin/activate
 fi
 
+# Many projects share module names under `lettuce.*` and `kale.*`, so checkouts sharing one
+# cache directory overwrite each other's entries. Give each checkout its own directory.
+if [ -n "${MYPY_CACHE_DIR//[[:space:]]/}" ]; then
+    export MYPY_CACHE_DIR="${MYPY_CACHE_DIR}/${PROJECT_ROOT//\//_}"
+fi
+
 MYPYPATH=src mypy --namespace-packages --explicit-package-base src
