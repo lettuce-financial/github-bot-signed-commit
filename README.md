@@ -25,7 +25,7 @@ recreate this commit remotely using the bot.
 ### Invocation
 
 ```sh
-write-commit \
+github-bot-signed-commit-commit create \
   --app-id <github-app-id> \
   --private-key <github-app-private-key> \
   --repo /path/to/repo \
