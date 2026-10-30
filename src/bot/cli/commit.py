@@ -3,11 +3,16 @@ from logging import basicConfig as basic_config
 from pathlib import Path
 
 from click import Path as PathType
-from click import command, option, secho
+from click import group, option, secho
 
-from .dtos import Tree
-from .local import extract_repo_name, read_commit, read_repo
-from .remote import authenticate_app, write_commit
+from ..dtos import Tree
+from ..local import extract_repo_name, read_commit, read_repo
+from ..remote import authenticate_app, write_commit
+
+
+@group()
+def main() -> None:
+    """Read a local git commit, or recreate it on GitHub as a signed bot commit."""
 
 
 def print_tree(tree: Tree, parent: Path, depth: int = 0) -> None:
@@ -25,7 +30,7 @@ def print_tree(tree: Tree, parent: Path, depth: int = 0) -> None:
         print_tree(child, tree.path, depth + 1)
 
 
-@command()
+@main.command()
 @option(
     "--repo-path",
     "--path",
@@ -43,20 +48,20 @@ def print_tree(tree: Tree, parent: Path, depth: int = 0) -> None:
     help="The local ref to read.",
     required=True,
 )
-def read(
+def retrieve(
     *,
     repo_path: Path,
-    sha: str,
+    ref: str,
 ) -> None:
     """Read a commit from a local git repo and print it."""
     repo = read_repo(repo_path)
-    commit = read_commit(repo, sha)
+    commit = read_commit(repo, ref)
 
     secho(f"Commit: {commit.message}", fg="green")
     print_tree(commit.tree, Path())
 
 
-@command()
+@main.command()
 @option(
     "--repo-path",
     "--path",
@@ -104,7 +109,7 @@ def read(
     envvar="GITHUB_APP_PRIVATE_KEY",
     required=True,
 )
-def write(
+def create(
     *,
     app_id: int,
     branch: str,

@@ -36,8 +36,7 @@ types = [
 
 [project.scripts]
 
-read-commit = "bot.cli:read"
-write-commit = "bot.cli:write"
+github-bot-signed-commit-commit = "bot.cli.commit:main"
 
 [build-system]
 
