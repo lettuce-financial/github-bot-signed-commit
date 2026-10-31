@@ -30,7 +30,7 @@ test = [
 
 types = [
   "mypy==2.4.1",
-  "types-requests==2.33.0.20261006",
+  "types-requests==2.33.0.20261030",
 ]
 
 
